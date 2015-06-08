@@ -68,7 +68,7 @@ public class Board {
 		
 		Scanner s = null;
 		try {
-			s = new Scanner(new File("C:\\Users\\Will\\workspace\\Scrabble\\res\\dictionaries\\SCOWL-70.txt"));
+			s = new Scanner(new File("res/dictionaries/SCOWL-70.txt"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
