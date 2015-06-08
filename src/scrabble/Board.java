@@ -188,10 +188,39 @@ public class Board {
 				}
 			}
 			if(sameX) {
+				boolean before;
+				int loop = 0;
+				do {
+					if(tiles[placed.get(0).getBoardX()][placed.get(0).getBoardY() - (1 + loop)].getLetter() != '\0') {
+						placed.add(0, tiles[placed.get(0).getBoardX()][placed.get(0).getBoardY() - (1 + loop)]);
+						loop++;
+						before = true;
+					}
+					else {
+						before = false;
+					}
+				} while(before);
+				
+				loop = 0;
+				do {
+					if(tiles[placed.get(placed.size() - 1).getBoardX()][placed.get(placed.size() - 1).getBoardY() + (1 + loop)].getLetter() != '\0') {
+						placed.add(placed.size(), tiles[placed.get(placed.size() - 1).getBoardX()][placed.get(placed.size() - 1).getBoardY() + (1 + loop)]);
+						loop++;
+						before = true;
+					}
+					else {
+						before = false;
+					}
+				} while (before);
 				boolean nextTo = true;
 				for(int x = 0; x < placed.size() - 1; x ++) {
 					if(placed.get(x).getBoardY() != (placed.get(x + 1).getBoardY() - 1)) {
-						nextTo = false;
+						if(tiles[placed.get(x).getBoardX()][placed.get(x).getBoardY() + 1].getLetter() == '\0') {
+							nextTo = false;
+						}
+						else {
+							placed.add(x + 1, tiles[placed.get(x).getBoardX()][placed.get(x).getBoardY() + 1]);
+						}
 					}
 				}
 				if(nextTo) {
@@ -199,6 +228,7 @@ public class Board {
 					for(Cell c : placed) {
 						word += String.valueOf(c.getLetter());
 					}
+					System.out.println(word);
 					if(isWord(word)) {
 						for(Cell c : placed) {
 							c.setTemporary(false);
@@ -212,10 +242,43 @@ public class Board {
 				}
 			}
 			else if(sameY) {
+				boolean before;
+				int loop = 0;
+				do {
+					if(tiles[placed.get(0).getBoardX() - (1 + loop)][placed.get(0).getBoardY()].getLetter() != '\0') {
+						placed.add(0, tiles[placed.get(0).getBoardX() - (1 + loop)][placed.get(0).getBoardY()]);
+						before = true;
+						System.out.println("adding beginning letter");
+						loop++;
+					}
+					else {
+						before = false;
+					}
+				} while(before);
+				loop = 0;
+				do {
+					if(tiles[placed.get(placed.size() - 1).getBoardX() + (1 + loop)][placed.get(placed.size() - 1).getBoardY()].getLetter() != '\0') {
+						placed.add(placed.size(), tiles[placed.get(placed.size() - 1).getBoardX() + (1 + loop)][placed.get(placed.size() - 1).getBoardY()]);
+						before = true;
+						System.out.println("adding end letter" + loop);
+						for(Cell c : placed) {
+							System.out.println(c.getBoardX());
+						}
+						loop++;
+					}
+					else {
+						before = false;
+					}
+				} while(before);
 				boolean nextTo = true;
 				for(int x = 0; x < placed.size() - 1; x ++) {
 					if(placed.get(x).getBoardX() != (placed.get(x + 1).getBoardX() - 1)) {
-						nextTo = false;
+						if(tiles[placed.get(x).getBoardX() + 1][placed.get(x).getBoardY()].getLetter() == '\0') {
+							nextTo = false;
+						}
+						else {
+							placed.add(x + 1, tiles[placed.get(x).getBoardX() + 1][placed.get(x).getBoardY()]);
+						}
 					}
 				}
 				if(nextTo) {
@@ -223,6 +286,7 @@ public class Board {
 					for(Cell c : placed) {
 						word += String.valueOf(c.getLetter());
 					}
+					System.out.println(word);
 					if(isWord(word)) {
 						for(Cell c : placed) {
 							c.setTemporary(false);

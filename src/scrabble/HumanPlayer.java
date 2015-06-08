@@ -34,36 +34,45 @@ public class HumanPlayer extends Player{
 	}
 	
 	public void mousePressed(int button, int x, int y) {
-		for(Cell c : tray) {
-			if(c.checkIfWithin(x, y)) {
-				System.out.println(String.valueOf(c.getLetter()) + " clicked");
-				selected = c;
-				break;
+		if(turn) {
+			for(Cell c : tray) {
+				if(c.checkIfWithin(x, y)) {
+					System.out.println(String.valueOf(c.getLetter()) + " clicked");
+					selected = c;
+					break;
+				}
 			}
-		}
-		
-		if((selected != null) && (x < boardWidth)) {
-			if(board.placeLetter(x, y, selected.getLetter(), true)) {;
-				placed.add(selected);
-				tray.remove(selected);
-				selected = null;
+			
+			if((selected != null) && (x < boardWidth)) {
+				if(board.placeLetter(x, y, selected.getLetter(), true)) {;
+					placed.add(selected);
+					tray.remove(selected);
+					selected = null;
+				}
 			}
 		}
 	}
 	
 	public void keyPressed(int key, char c) {
-		if(key == Input.KEY_RETURN) {
-			if(placed.size() > 2) {
-				if(board.submitWord()) {
-					placed.clear();
+		if(turn) {
+			if(key == Input.KEY_RETURN) {
+				if(placed.size() > 1) {
+					if(board.submitWord()) {
+						placed.clear();
+						turn = false;
+					}
 				}
 			}
+			if(key == Input.KEY_DELETE) {
+				tray.addAll(placed);
+				board.removeAllTempLetters();
+				placed.clear();
+				System.out.println("Returning");
+			}
 		}
-		if(key == Input.KEY_DELETE) {
-			tray.addAll(placed);
-			board.removeAllTempLetters();
-			placed.clear();
-			System.out.println("Returning");
-		}
+	}
+	@Override
+	public void takeTurn() {
+		turn = true;
 	}
 }

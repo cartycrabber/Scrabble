@@ -14,4 +14,8 @@ public class ComputerPlayer extends Player{
 		
 	}
 
+	public void takeTurn()
+	{
+		turn = true;
+	}
 }
