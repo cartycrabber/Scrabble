@@ -77,6 +77,10 @@ public class Cell {
 	{
 		return multiplier;
 	}
+	public void setMultiplier(int mult)
+	{
+		multiplier = mult;
+	}
 	
 	public int getBoardX()
 	{

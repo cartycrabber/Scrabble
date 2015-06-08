@@ -17,6 +17,8 @@ import org.newdawn.slick.Image;
 
 public class Board {
 	
+	private final int MIN_WORD_SIZE = 2;
+	
 	public enum WordDirection {
 		DOWN,
 		RIGHT
@@ -38,6 +40,72 @@ public class Board {
 				tiles[x][y] = new Cell(1, x, y, false);
 			}
 		}
+		
+		tiles[0][0].setMultiplier(3);
+		tiles[1][1].setMultiplier(2);
+		tiles[2][2].setMultiplier(2);
+		tiles[3][3].setMultiplier(2);
+		tiles[4][4].setMultiplier(2);
+		tiles[5][5].setMultiplier(3);
+		tiles[6][6].setMultiplier(2);
+		tiles[8][8].setMultiplier(2);
+		tiles[9][9].setMultiplier(3);
+		tiles[10][10].setMultiplier(2);
+		tiles[11][11].setMultiplier(2);
+		tiles[12][12].setMultiplier(2);
+		tiles[13][13].setMultiplier(2);
+		tiles[14][14].setMultiplier(3);
+		
+		tiles[14][0].setMultiplier(3);
+		tiles[13][1].setMultiplier(2);
+		tiles[12][2].setMultiplier(2);
+		tiles[11][3].setMultiplier(2);
+		tiles[10][4].setMultiplier(2);
+		tiles[9][5].setMultiplier(3);
+		tiles[8][6].setMultiplier(2);
+		tiles[6][8].setMultiplier(2);
+		tiles[5][9].setMultiplier(3);
+		tiles[4][10].setMultiplier(2);
+		tiles[3][11].setMultiplier(2);
+		tiles[2][12].setMultiplier(2);
+		tiles[1][13].setMultiplier(2);
+		tiles[0][14].setMultiplier(3);
+		
+		tiles[0][3].setMultiplier(2);
+		tiles[0][7].setMultiplier(3);
+		tiles[1][5].setMultiplier(3);
+		tiles[2][6].setMultiplier(2);
+		tiles[3][7].setMultiplier(2);
+		tiles[2][8].setMultiplier(2);
+		tiles[1][9].setMultiplier(3);
+		tiles[0][11].setMultiplier(2);
+		
+		tiles[3][0].setMultiplier(2);
+		tiles[7][0].setMultiplier(3);
+		tiles[11][0].setMultiplier(2);
+		tiles[5][1].setMultiplier(3);
+		tiles[6][2].setMultiplier(2);
+		tiles[7][3].setMultiplier(2);
+		tiles[8][2].setMultiplier(2);
+		tiles[9][1].setMultiplier(3);
+		
+		tiles[14][3].setMultiplier(2);
+		tiles[14][7].setMultiplier(3);
+		tiles[14][11].setMultiplier(2);
+		tiles[13][5].setMultiplier(3);
+		tiles[12][6].setMultiplier(2);
+		tiles[11][7].setMultiplier(2);
+		tiles[12][8].setMultiplier(2);
+		tiles[13][9].setMultiplier(3);
+		
+		tiles[3][14].setMultiplier(2);
+		tiles[7][14].setMultiplier(3);
+		tiles[11][14].setMultiplier(2);
+		tiles[5][13].setMultiplier(3);
+		tiles[6][12].setMultiplier(2);
+		tiles[7][11].setMultiplier(2);
+		tiles[8][12].setMultiplier(2);
+		tiles[9][13].setMultiplier(3);
 		
 		letterPointVals.put('a', 1);
 		letterPointVals.put('b', 5);
@@ -77,6 +145,7 @@ public class Board {
 			validWords.add(s.next().toLowerCase());
 		}
 		s.close();
+		
 	}
 	
 	public boolean placeWord(String word, int x, int y, WordDirection dir)//Returns true if valid move, false if not
@@ -165,7 +234,7 @@ public class Board {
 		}
 	}
 	
-	public boolean submitWord()
+	public int submitWord()
 	{
 		List<Cell> placed = new ArrayList<Cell>();
 		for(Cell[] a : tiles) {
@@ -191,7 +260,7 @@ public class Board {
 				boolean before;
 				int loop = 0;
 				do {
-					if(tiles[placed.get(0).getBoardX()][placed.get(0).getBoardY() - (1 + loop)].getLetter() != '\0') {
+					if(((placed.get(0).getBoardY() - (1 + loop)) >= 0) && (tiles[placed.get(0).getBoardX()][placed.get(0).getBoardY() - (1 + loop)].getLetter() != '\0')) {
 						placed.add(0, tiles[placed.get(0).getBoardX()][placed.get(0).getBoardY() - (1 + loop)]);
 						loop++;
 						before = true;
@@ -203,7 +272,7 @@ public class Board {
 				
 				loop = 0;
 				do {
-					if(tiles[placed.get(placed.size() - 1).getBoardX()][placed.get(placed.size() - 1).getBoardY() + (1 + loop)].getLetter() != '\0') {
+					if(((placed.get(placed.size() - 1).getBoardY() + (1 + loop)) >= 0) && (tiles[placed.get(placed.size() - 1).getBoardX()][placed.get(placed.size() - 1).getBoardY() + (1 + loop)].getLetter() != '\0')) {
 						placed.add(placed.size(), tiles[placed.get(placed.size() - 1).getBoardX()][placed.get(placed.size() - 1).getBoardY() + (1 + loop)]);
 						loop++;
 						before = true;
@@ -230,14 +299,16 @@ public class Board {
 					}
 					System.out.println(word);
 					if(isWord(word)) {
+						int score = 0;
 						for(Cell c : placed) {
+							score += (letterPointVals.get(c.getLetter()) * c.getMultiplier());
 							c.setTemporary(false);
 						}
-						return true;
+						return score;
 					}
 					else {
 						System.out.println("Submitted letters are not a word");
-						return false;
+						return -1;
 					}
 				}
 			}
@@ -245,7 +316,7 @@ public class Board {
 				boolean before;
 				int loop = 0;
 				do {
-					if(tiles[placed.get(0).getBoardX() - (1 + loop)][placed.get(0).getBoardY()].getLetter() != '\0') {
+					if(((placed.get(0).getBoardX() - (1 + loop)) >= 0) && (tiles[placed.get(0).getBoardX() - (1 + loop)][placed.get(0).getBoardY()].getLetter() != '\0')) {
 						placed.add(0, tiles[placed.get(0).getBoardX() - (1 + loop)][placed.get(0).getBoardY()]);
 						before = true;
 						System.out.println("adding beginning letter");
@@ -257,7 +328,7 @@ public class Board {
 				} while(before);
 				loop = 0;
 				do {
-					if(tiles[placed.get(placed.size() - 1).getBoardX() + (1 + loop)][placed.get(placed.size() - 1).getBoardY()].getLetter() != '\0') {
+					if(((placed.get(placed.size() - 1).getBoardX() + (1 + loop)) >= 0) && (tiles[placed.get(placed.size() - 1).getBoardX() + (1 + loop)][placed.get(placed.size() - 1).getBoardY()].getLetter() != '\0')) {
 						placed.add(placed.size(), tiles[placed.get(placed.size() - 1).getBoardX() + (1 + loop)][placed.get(placed.size() - 1).getBoardY()]);
 						before = true;
 						System.out.println("adding end letter" + loop);
@@ -288,20 +359,22 @@ public class Board {
 					}
 					System.out.println(word);
 					if(isWord(word)) {
+						int score = 0;
 						for(Cell c : placed) {
+							score += (letterPointVals.get(c.getLetter()) * c.getMultiplier());
 							c.setTemporary(false);
 						}
-						return true;
+						return score;
 					}
 					else {
 						System.out.println("Submitted letters are not a word");
-						return false;
+						return -1;
 					}
 				}
 			}
 		}
 		System.out.println("Submitted letters are not linear");
-		return false;
+		return -1;
 	}
 	
 	public int getScore()
@@ -317,9 +390,14 @@ public class Board {
 		return score;
 	}
 	
-	private boolean isWord(String word)
+	public boolean isWord(String word)
 	{
-		return validWords.contains(word);
+		if(word.length() < MIN_WORD_SIZE) {
+			return false;
+		}
+		else {
+			return validWords.contains(word);
+		}
 	}
 	
 	public void render(GameContainer arg0, Graphics arg1)
@@ -329,10 +407,10 @@ public class Board {
 				if(tiles[x][y].getLetter() != '\0') {
 					if(tiles[x][y].isTemporary())
 					{
-						Scrabble.getImage(String.valueOf(tiles[x][y].getLetter()).toUpperCase()).draw(tiles[x][y].getWindowX(), tiles[x][y].getWindowY(), 40, 40, Color.transparent.red);
+						Scrabble.getImage(String.valueOf(tiles[x][y].getLetter())).draw(tiles[x][y].getWindowX(), tiles[x][y].getWindowY(), 40, 40, Color.transparent.red);
 					}
 					else {
-						Scrabble.getImage(String.valueOf(tiles[x][y].getLetter()).toUpperCase()).draw(tiles[x][y].getWindowX(), tiles[x][y].getWindowY(), 40, 40);
+						Scrabble.getImage(String.valueOf(tiles[x][y].getLetter())).draw(tiles[x][y].getWindowX(), tiles[x][y].getWindowY(), 40, 40);
 					}
 				}
 			}

@@ -2,6 +2,7 @@ package scrabble;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -9,7 +10,6 @@ import org.newdawn.slick.Input;;
 
 public class HumanPlayer extends Player{
 
-	private List<Cell> tray;
 	private List<Cell> placed;
 	private Cell selected;
 	private int boardWidth;
@@ -17,19 +17,19 @@ public class HumanPlayer extends Player{
 	public HumanPlayer(String name, Board board, int boardWidth)
 	{
 		super(name, board);
-		tray = new ArrayList<Cell>();
+		turn = false;
 		placed = new ArrayList<Cell>();
 		this.boardWidth = boardWidth;
-		for(int x = 0; x < letters.length; x++) {
-			Cell c = new Cell(-1, -1, letters[x], false);
-			c.setWindow(boardWidth + (50 * x) + (x * 10) + 50, 540);
-			tray.add(x, c);;
+		for(int x = 0; x < TRAY_SIZE; x++) {
+			tray.get(x).setWindow(boardWidth + (50 * x) + (x * 10) + 50, 540);
 		}
 	}
 	@Override
 	public void render(GameContainer arg0, Graphics arg1) {
-		for(int x = 0; x < tray.size(); x++) {
-			Scrabble.getImage(String.valueOf(tray.get(x).getLetter()).toUpperCase()).draw(tray.get(x).getWindowX(), tray.get(x).getWindowY());
+		if(turn) {
+			for(int x = 0; x < tray.size(); x++) {
+				Scrabble.getImage(String.valueOf(tray.get(x).getLetter())).draw(tray.get(x).getWindowX(), tray.get(x).getWindowY());
+			}
 		}
 	}
 	
@@ -37,7 +37,6 @@ public class HumanPlayer extends Player{
 		if(turn) {
 			for(Cell c : tray) {
 				if(c.checkIfWithin(x, y)) {
-					System.out.println(String.valueOf(c.getLetter()) + " clicked");
 					selected = c;
 					break;
 				}
@@ -56,8 +55,15 @@ public class HumanPlayer extends Player{
 	public void keyPressed(int key, char c) {
 		if(turn) {
 			if(key == Input.KEY_RETURN) {
-				if(placed.size() > 1) {
-					if(board.submitWord()) {
+				if(placed.size() > 0) {
+					int submitted = board.submitWord();
+					if(submitted >= 0) {
+						score += submitted;
+						for(Cell cell : placed) {
+							Random r = new Random();
+							cell.setLetter((char)(r.nextInt(26) + 'a'));
+						}
+						tray.addAll(placed);
 						placed.clear();
 						turn = false;
 					}
@@ -73,6 +79,7 @@ public class HumanPlayer extends Player{
 	}
 	@Override
 	public void takeTurn() {
+		System.out.println(name + "'s turn!");
 		turn = true;
 	}
 }
