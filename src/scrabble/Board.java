@@ -6,9 +6,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -33,7 +35,7 @@ public class Board {
 		tiles = new Cell[width][height];
 		for(int x = 0; x < this.width; x++) {
 			for(int y = 0; y < this.height; y++) {
-				tiles[x][y] = new Cell(1, x, y);
+				tiles[x][y] = new Cell(1, x, y, false);
 			}
 		}
 		
@@ -119,6 +121,125 @@ public class Board {
 		return false;
 	}
 	
+	public boolean placeLetter(int x, int y, char letter, boolean window)//Place a single letter on the board, true if window cords, false if board cords
+	{
+		if(!window) {
+			if(tiles[x][y].getLetter() == '\0') {
+				tiles[x][y].setLetter(letter);
+				tiles[x][y].setTemporary(true);
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			if(tiles[(int)(x / Cell.cellSize)][(int)(y / Cell.cellSize)].getLetter() == '\0') {
+				tiles[(int)(x / Cell.cellSize)][(int)(y / Cell.cellSize)].setLetter(letter);
+				tiles[(int)(x / Cell.cellSize)][(int)(y / Cell.cellSize)].setTemporary(true);
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+	public void removeLetter(int x, int y, boolean window)//Letter must be temporary
+	{
+		if(!window) {
+			tiles[x][y].setLetter('\0');
+		}
+		else {
+			tiles[(int)(x / Cell.cellSize)][(int)(y / Cell.cellSize)].setLetter('\0');
+		}
+	}
+	public void removeAllTempLetters()
+	{
+		for(Cell[] a : tiles) {
+			for(Cell b : a) {
+				if(b.isTemporary()) {
+					b.setLetter('\0');
+					b.setTemporary(false);
+				}
+			}
+		}
+	}
+	
+	public boolean submitWord()
+	{
+		List<Cell> placed = new ArrayList<Cell>();
+		for(Cell[] a : tiles) {
+			for(Cell b : a) {
+				if(b.isTemporary()) {
+					placed.add(b);
+				}
+			}
+		}
+		
+		if(placed.size() > 0) {
+			boolean sameX = true;
+			boolean sameY = true;
+			for(Cell c : placed) {
+				if(c.getBoardX() != placed.get(0).getBoardX()) {
+					sameX = false;
+				}
+				if(c.getBoardY() != placed.get(0).getBoardY()) {
+					sameY = false;
+				}
+			}
+			if(sameX) {
+				boolean nextTo = true;
+				for(int x = 0; x < placed.size() - 1; x ++) {
+					if(placed.get(x).getBoardY() != (placed.get(x + 1).getBoardY() - 1)) {
+						nextTo = false;
+					}
+				}
+				if(nextTo) {
+					String word = "";
+					for(Cell c : placed) {
+						word += String.valueOf(c.getLetter());
+					}
+					if(isWord(word)) {
+						for(Cell c : placed) {
+							c.setTemporary(false);
+						}
+						return true;
+					}
+					else {
+						System.out.println("Submitted letters are not a word");
+						return false;
+					}
+				}
+			}
+			else if(sameY) {
+				boolean nextTo = true;
+				for(int x = 0; x < placed.size() - 1; x ++) {
+					if(placed.get(x).getBoardX() != (placed.get(x + 1).getBoardX() - 1)) {
+						nextTo = false;
+					}
+				}
+				if(nextTo) {
+					String word = "";
+					for(Cell c : placed) {
+						word += String.valueOf(c.getLetter());
+					}
+					if(isWord(word)) {
+						for(Cell c : placed) {
+							c.setTemporary(false);
+						}
+						return true;
+					}
+					else {
+						System.out.println("Submitted letters are not a word");
+						return false;
+					}
+				}
+			}
+		}
+		System.out.println("Submitted letters are not linear");
+		return false;
+	}
+	
 	public int getScore()
 	{
 		int score = 0;
@@ -137,30 +258,18 @@ public class Board {
 		return validWords.contains(word);
 	}
 	
-	public void print()
-	{
-		System.out.println(" ___ ___ ___ ___ ___");
-		for(int y = 0; y < tiles[0].length; y++) {
-			System.out.print("|");
-			for(int x = 0; x < tiles.length; x++) {
-				if(tiles[x][y].getLetter() == '\0') {
-					System.out.print("   |");
-				}
-				else {
-					System.out.print(" " + tiles[x][y].getLetter() + " |");
-				}
-			}
-			System.out.print("\n|___|___|___|___|___|\n");
-		}
-		
-	}
-	
 	public void render(GameContainer arg0, Graphics arg1)
 	{
 		for(int x = 0; x < tiles.length; x++) {
 			for(int y = 0; y < tiles[0].length; y++) {
 				if(tiles[x][y].getLetter() != '\0') {
-					Scrabble.getImage(String.valueOf(tiles[x][y].getLetter()).toUpperCase()).draw(tiles[x][y].getWindowX(), tiles[x][y].getWindowY(), 40, 40);
+					if(tiles[x][y].isTemporary())
+					{
+						Scrabble.getImage(String.valueOf(tiles[x][y].getLetter()).toUpperCase()).draw(tiles[x][y].getWindowX(), tiles[x][y].getWindowY(), 40, 40, Color.transparent.red);
+					}
+					else {
+						Scrabble.getImage(String.valueOf(tiles[x][y].getLetter()).toUpperCase()).draw(tiles[x][y].getWindowX(), tiles[x][y].getWindowY(), 40, 40);
+					}
 				}
 			}
 		}

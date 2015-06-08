@@ -26,6 +26,9 @@ public class Scrabble extends BasicGame{
 	boolean playerTurn;
 	private Board board;
 	
+	HumanPlayer player1;
+	ComputerPlayer player2;
+	
 	//URL Prefixes
 	static final String imageLoc = "res/images/";
 	static final String dictLoc = "res/dictionaries/";
@@ -45,8 +48,8 @@ public class Scrabble extends BasicGame{
 		{
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new Scrabble("Words Without Friends"));
-			appgc.setDisplayMode(600, 600, false);
-			appgc.setShowFPS(true);
+			appgc.setDisplayMode(1100, 600, false);
+			appgc.setShowFPS(false);
 			appgc.start();
 		}
 		catch (SlickException ex)
@@ -62,10 +65,14 @@ public class Scrabble extends BasicGame{
 		
 		state = State.GAME;
 		board = new Board(15,15);
-		board.placeWord("Words", 7, 7, Board.WordDirection.RIGHT);
-		board.placeWord("without", 8, 3, Board.WordDirection.DOWN);
-		board.placeWord("Friends", 11, 1, Board.WordDirection.DOWN);
-		System.out.println("Score: " + board.getScore());
+		
+		player1 = new HumanPlayer("Player 1", board, 600);
+		player2 = new ComputerPlayer("Player 2", board);
+		player1.setTurn(true);
+//		board.placeWord("Words", 7, 7, Board.WordDirection.RIGHT);
+//		board.placeWord("without", 8, 3, Board.WordDirection.DOWN);
+//		board.placeWord("Friends", 11, 1, Board.WordDirection.DOWN);
+//		System.out.println("Score: " + board.getScore());
 	}
 	
 	@Override
@@ -76,14 +83,14 @@ public class Scrabble extends BasicGame{
 		case GAME:
 			images.get("board").draw(0,0);
 			board.render(arg0, arg1);
+			player1.render(arg0, arg1);
+			player2.render(arg0, arg1);
 			break;
 		}
 	}
 
 	@Override
 	public void update(GameContainer arg0, int arg1) throws SlickException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	
@@ -95,5 +102,12 @@ public class Scrabble extends BasicGame{
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public void mousePressed(int button, int x, int y) {
+		player1.mousePressed(button, x, y);
+	}
+	public void keyPressed(int key, char c) {
+		player1.keyPressed(key, c);
 	}
 }
