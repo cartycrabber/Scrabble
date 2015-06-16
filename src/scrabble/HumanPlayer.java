@@ -59,10 +59,18 @@ public class HumanPlayer extends Player{
 					int submitted = board.submitWord();
 					if(submitted >= 0) {
 						score += submitted;
-						for(Cell cell : placed) {
-							Random r = new Random();
-							cell.setLetter((char)(r.nextInt(26) + 'a'));
-						}
+						/*Random r = new Random();
+						for(int x = 0; x < placed.size(); x++) {
+							char l = (char)(r.nextInt(26) + 'a');
+							if(letterLimits.get(l) > 0) {
+								placed.get(x).setLetter(l);;
+							}
+							else {
+								System.out.println("No letters left: " + l);
+								x -= 1;
+							}
+						}*/
+						placed = newLetters(placed);
 						tray.addAll(placed);
 						placed.clear();
 						turn = false;

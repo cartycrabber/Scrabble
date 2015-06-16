@@ -25,6 +25,7 @@ public class Board {
 	}
 	
 	private Map<Character, Integer> letterPointVals = new HashMap<Character, Integer>();
+	public Map<Character, Integer> letterLimits = new HashMap<Character, Integer>();
 	private int width;
 	private int height;
 	private Cell[][] tiles;
@@ -40,6 +41,33 @@ public class Board {
 				tiles[x][y] = new Cell(1, x, y, false);
 			}
 		}
+		
+		letterLimits.put('a', 9);
+		letterLimits.put('b', 2);
+		letterLimits.put('c', 2);
+		letterLimits.put('d', 4);
+		letterLimits.put('e', 12);
+		letterLimits.put('f', 2);
+		letterLimits.put('g', 3);
+		letterLimits.put('h', 2);
+		letterLimits.put('i', 9);
+		letterLimits.put('j', 1);
+		letterLimits.put('k', 1);
+		letterLimits.put('l', 4);
+		letterLimits.put('m', 2);
+		letterLimits.put('n', 6);
+		letterLimits.put('o', 8);
+		letterLimits.put('p', 2);
+		letterLimits.put('q', 1);
+		letterLimits.put('r', 6);
+		letterLimits.put('s', 4);
+		letterLimits.put('t', 6);
+		letterLimits.put('u', 4);
+		letterLimits.put('v', 2);
+		letterLimits.put('w', 2);
+		letterLimits.put('x', 1);
+		letterLimits.put('y', 2);
+		letterLimits.put('z', 1);
 		
 		tiles[0][0].setMultiplier(3);
 		tiles[1][1].setMultiplier(2);
@@ -203,9 +231,9 @@ public class Board {
 			}
 		}
 		else {
-			if(tiles[(int)(x / Cell.cellSize)][(int)(y / Cell.cellSize)].getLetter() == '\0') {
-				tiles[(int)(x / Cell.cellSize)][(int)(y / Cell.cellSize)].setLetter(letter);
-				tiles[(int)(x / Cell.cellSize)][(int)(y / Cell.cellSize)].setTemporary(true);
+			if(tiles[(int)(x / Cell.CELL_SIZE)][(int)(y / Cell.CELL_SIZE)].getLetter() == '\0') {
+				tiles[(int)(x / Cell.CELL_SIZE)][(int)(y / Cell.CELL_SIZE)].setLetter(letter);
+				tiles[(int)(x / Cell.CELL_SIZE)][(int)(y / Cell.CELL_SIZE)].setTemporary(true);
 				return true;
 			}
 			else {
@@ -219,7 +247,7 @@ public class Board {
 			tiles[x][y].setLetter('\0');
 		}
 		else {
-			tiles[(int)(x / Cell.cellSize)][(int)(y / Cell.cellSize)].setLetter('\0');
+			tiles[(int)(x / Cell.CELL_SIZE)][(int)(y / Cell.CELL_SIZE)].setLetter('\0');
 		}
 	}
 	public void removeAllTempLetters()
@@ -250,9 +278,11 @@ public class Board {
 			boolean sameY = true;
 			for(Cell c : placed) {
 				if(c.getBoardX() != placed.get(0).getBoardX()) {
+					System.out.println("Not same X: " + c.getBoardX() + " and " + placed.get(0).getBoardX());
 					sameX = false;
 				}
 				if(c.getBoardY() != placed.get(0).getBoardY()) {
+					System.out.println("Not same Y" + c.getBoardY() + " and " + placed.get(0).getBoardY());
 					sameY = false;
 				}
 			}

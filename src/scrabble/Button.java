@@ -19,6 +19,7 @@ public class Button {
 	private Image image;
 	private boolean clicked = false;
 	private boolean prevClicked = false;
+	private boolean render = false;
 
 	public Button(int xPosition, int yPosition, Image image)
 	{
@@ -48,8 +49,10 @@ public class Button {
 	}
 	private void render(GameContainer arg0, Graphics arg1)
 	{
-		if(image != null) {
-			image.draw(x, y, width, height);
+		if(render){
+			if(image != null) {
+				image.draw(x, y, width, height);
+			}
 		}
 	}
 	private void update(GameContainer arg0, int arg1)
@@ -57,8 +60,9 @@ public class Button {
 		Input input = arg0.getInput();
 		int mx = input.getMouseX();
 		int my = input.getMouseY();
-		if(((mx > x) && (mx < (x + width))) && ((my > y) && (my < (my + height)))) {
+		if(((mx > x) && (mx < (x + width))) && ((my > y) && (my < (y + height)))) {
 			if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
+				
 				clicked = true;
 			}
 			else {
@@ -88,6 +92,15 @@ public class Button {
 			}
 		}
 		return false;
+	}
+	
+	public void setRender(boolean render)
+	{
+		this.render = render;
+	}
+	public boolean isRender()
+	{
+		return render;
 	}
 	
 	public static void renderAll(GameContainer arg0, Graphics arg1)

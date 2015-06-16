@@ -44,6 +44,7 @@ public class Scrabble extends BasicGame{
 	//GUI Elements
 	private static Map<String, Image> images = new HashMap<String, Image>();
 	Button exchangeButton;
+	Button startGameButton;
 	
 	public Scrabble(String gamename)
 	{
@@ -55,7 +56,7 @@ public class Scrabble extends BasicGame{
 		try
 		{
 			AppGameContainer appgc;
-			appgc = new AppGameContainer(new Scrabble("Words Without Friends"));
+			appgc = new AppGameContainer(new Scrabble("Scrabble"));
 			appgc.setDisplayMode(1100, 600, false);
 			appgc.setShowFPS(false);
 			appgc.start();
@@ -69,10 +70,12 @@ public class Scrabble extends BasicGame{
 	@Override
 	public void init(GameContainer arg0) throws SlickException {		
 		//Create all images
-		images.put("board", new Image(imageLoc + "board.png"));
-		images.put("exchange", new Image(imageLoc + "recycle.png"));
-		images.put("a", new Image(imageLoc + "A.png"));
-		images.put("b", new Image(imageLoc + "B.png"));
+		images.put("board", new Image(imageLoc + "board.png"));//http://interactive.usc.edu/wp-content/uploads/2011/08/board.png
+		images.put("exchange", new Image(imageLoc + "recycle.png"));//https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Recycle001.svg/250px-Recycle001.svg.png
+		images.put("start", new Image(imageLoc + "startgame.png"));//http://img3.wikia.nocookie.net/__cb20081130214319/banjokazooie/images/5/5b/Start_button_(GBA).png
+		images.put("menu", new Image(imageLoc + "menu.png"));//http://www.androidheadlines.com/wp-content/uploads/2013/11/scrabble_header.jpg
+		images.put("a", new Image(imageLoc + "A.png"));//ALL OF THESE LETTERS:
+		images.put("b", new Image(imageLoc + "B.png"));//http://3.bp.blogspot.com/-bi0-jBO-3_Y/TfVyhHCfW8I/AAAAAAAAAes/rMDQ2I2AECY/s1600/word%255E2_tiles_sprites_active_new.png
 		images.put("c", new Image(imageLoc + "C.png"));
 		images.put("d", new Image(imageLoc + "D.png"));
 		images.put("e", new Image(imageLoc + "E.png"));
@@ -98,15 +101,15 @@ public class Scrabble extends BasicGame{
 		images.put("y", new Image(imageLoc + "Y.png"));
 		images.put("z", new Image(imageLoc + "Z.png"));
 		
-		state = State.GAME;
+		state = State.MENU;
 		turn = Turn.PLAYER1;
 		
 		board = new Board(15,15);
 		exchangeButton = new Button(1050, 300, 50, 50, images.get("exchange"));
+		startGameButton = new Button(650, 480, images.get("start"));
 		
 		player1 = new HumanPlayer("Will", board, 600);
-		player2 = new HumanPlayer("Mum", board, 600);
-		player1.takeTurn();
+		player2 = new HumanPlayer("Someone else", board, 600);
 //		board.placeWord("Words", 7, 7, Board.WordDirection.RIGHT);
 //		board.placeWord("without", 8, 3, Board.WordDirection.DOWN);
 //		board.placeWord("Friends", 11, 1, Board.WordDirection.DOWN);
@@ -117,10 +120,14 @@ public class Scrabble extends BasicGame{
 	public void render(GameContainer arg0, Graphics arg1) throws SlickException {
 		switch(state) {
 		case MENU:
+			images.get("menu").draw(0, 0, 1100, 600);
+			startGameButton.setRender(true);
+			exchangeButton.setRender(false);
 			break;
 		case GAME:
 			images.get("board").draw(0,0);
-			Button.renderAll(arg0, arg1);
+			exchangeButton.setRender(true);
+			startGameButton.setRender(false);
 			board.render(arg0, arg1);
 			player1.render(arg0, arg1);
 			player2.render(arg0, arg1);
@@ -137,37 +144,51 @@ public class Scrabble extends BasicGame{
 			}
 			break;
 		}
+		Button.renderAll(arg0, arg1);
 	}
 
 	@Override
 	public void update(GameContainer arg0, int arg1) throws SlickException {
 		Button.updateAll(arg0, arg1);
 		
-		switch(turn) {
-		case PLAYER1:
-			if(!player1.isTurn()) {
-				turn = Turn.PLAYER2;
-				player2.takeTurn();
-			}
-			else {
-				if(exchangeButton.isDownEvent()) {
-					player1.exchangeTiles();
-					player1.setTurn(false);
-					player2.takeTurn();
-				}
+		switch(state) {
+		case MENU:
+			player1.setTurn(false);
+			player2.setTurn(false);
+			if(startGameButton.isDownEvent()) {
+				state = State.GAME;
 			}
 			break;
-		case PLAYER2:
-			if(!player2.isTurn()) {
-				turn = Turn.PLAYER1;
-				player1.takeTurn();
-			}
-			else {
-				if(exchangeButton.isDownEvent()) {
-					player2.exchangeTiles();
-					player2.setTurn(false);
+		case GAME:
+			switch(turn) {
+			case PLAYER1:
+				if(!player1.isTurn()) {
+					turn = Turn.PLAYER2;
+					player2.takeTurn();
+				}
+				else {
+					if(exchangeButton.isDownEvent()) {
+						System.out.println("Player 1 Exchanging");
+						if(player1.exchangeTiles()){
+							player1.setTurn(false);
+						}
+					}
+				}
+				break;
+			case PLAYER2:
+				if(!player2.isTurn()) {
+					turn = Turn.PLAYER1;
 					player1.takeTurn();
 				}
+				else {
+					if(exchangeButton.isDownEvent()) {
+						System.out.println("Player 2 Exchanging");
+						if(player2.exchangeTiles()){
+							player2.setTurn(false);
+						}
+					}
+				}
+				break;
 			}
 			break;
 		}

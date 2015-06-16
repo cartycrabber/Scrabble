@@ -14,23 +14,33 @@ public class Cell {
 	
 	private Image img;
 	
-	public static final int cellSize = 40;
+	public static final int CELL_SIZE = 40;
+	public static final char DEFAULT_CHAR = '\0';
 	
+	
+	public Cell()
+	{
+		boardX = -1;
+		boardY = -1;
+		windowX = -1;
+		windowY = -1;
+		letter = DEFAULT_CHAR;
+	}
 	public Cell(int boardX, int boardY, boolean temporary)
 	{
 		this.boardX = boardX;
 		this.boardY = boardY;
-		this.windowX = boardX * cellSize;
-		this.windowY = boardY * cellSize;
-		this.letter = '\0';
+		this.windowX = boardX * CELL_SIZE;
+		this.windowY = boardY * CELL_SIZE;
+		this.letter = DEFAULT_CHAR;
 		this.temporary = temporary;
 	}
 	public Cell(int boardX, int boardY, char letter, boolean temporary)
 	{
 		this.boardX = boardX;
 		this.boardY = boardY;
-		this.windowX = boardX * cellSize;
-		this.windowY = boardY * cellSize;
+		this.windowX = boardX * CELL_SIZE;
+		this.windowY = boardY * CELL_SIZE;
 		this.letter = letter;
 		this.temporary = temporary;
 	}
@@ -39,9 +49,9 @@ public class Cell {
 		this.multiplier = multiplier;
 		this.boardX = boardX;
 		this.boardY = boardY;
-		this.windowX = boardX * cellSize;
-		this.windowY = boardY * cellSize;
-		this.letter = '\0';
+		this.windowX = boardX * CELL_SIZE;
+		this.windowY = boardY * CELL_SIZE;
+		this.letter = DEFAULT_CHAR;
 		this.temporary = temporary;
 	}
 	public Cell(int multiplier, int boardX, int boardY, char letter, boolean temporary)
@@ -49,16 +59,16 @@ public class Cell {
 		this.multiplier = multiplier;
 		this.boardX = boardX;
 		this.boardY = boardY;
-		this.windowX = boardX * cellSize;
-		this.windowY = boardY * cellSize;
+		this.windowX = boardX * CELL_SIZE;
+		this.windowY = boardY * CELL_SIZE;
 		this.letter = letter;
 		this.temporary = temporary;
 	}
 	
 	public boolean checkIfWithin(int x, int y)//Check if a point is within the border of the cell
 	{
-		if((x > windowX) && (x < (windowX + cellSize))) {
-			if((y > windowY) && (y < (windowY + cellSize))) {
+		if((x > windowX) && (x < (windowX + CELL_SIZE))) {
+			if((y > windowY) && (y < (windowY + CELL_SIZE))) {
 				return true;
 			}
 		}

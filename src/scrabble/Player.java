@@ -1,19 +1,22 @@
 package scrabble;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
 public abstract class Player {
-//	char[] letters = new char[7];
-	List<Cell> tray = new ArrayList<Cell>();
-	boolean turn;
-	String name;
-	Board board;
-	int score = 0;
+	
+	char[] letterBag;
+	protected List<Cell> tray = new ArrayList<Cell>();
+	protected boolean turn;
+	protected String name;
+	protected Board board;
+	protected int score = 0;
 	
 	final int TRAY_SIZE = 7;
 	
@@ -23,11 +26,10 @@ public abstract class Player {
 		this.name = name;
 		this.board = board;
 		
-		Random r = new Random();
 		for(int x = 0; x < TRAY_SIZE; x++) {
-			Cell c = new Cell(-1, -1, (char)(r.nextInt(26) + 'a'), false);
-			tray.add(x, c);
+			tray.add(new Cell());
 		}
+		tray = newLetters(tray);
 		System.out.print(name + "'s starting letters are ");
 		for(Cell c : tray) {
 			System.out.print(c.getLetter() + " ");
@@ -35,13 +37,48 @@ public abstract class Player {
 		System.out.println();
 	}
 	
-	public void exchangeTiles() {
+	public boolean exchangeTiles() {
 		if(tray.size() == TRAY_SIZE) {
-			Random r = new Random();
-			for(Cell c : tray) {
-				c.setLetter((char)(r.nextInt(26) + 'a'));
+			tray = newLetters(tray);
+			return true;
+		}
+		return false;
+	}
+	
+	protected List<Cell> newLetters(List<Cell> oldLetters)
+	{
+		System.out.println("Letter Lim Size " + board.letterLimits.size());
+		int emptyLetterCount = 0;
+		for(Map.Entry<Character, Integer> entry : board.letterLimits.entrySet()) {
+			System.out.println(entry.getValue());
+			if(entry.getValue() == 0) {
+				emptyLetterCount++;
+				System.out.println("Out of letter " + entry.getKey());
 			}
 		}
+		
+		if(emptyLetterCount >= 20) {
+			System.out.println("Game Over!");
+		}
+		
+		Random r = new Random();
+		for(int x = 0; x < oldLetters.size(); x++) {
+			char l = (char)(r.nextInt(26) + 'a');
+			if(board.letterLimits.get(l) > 0) {
+				if(oldLetters.get(x).getLetter() != Cell.DEFAULT_CHAR){
+					board.letterLimits.replace(oldLetters.get(x).getLetter(), board.letterLimits.get(oldLetters.get(x).getLetter()) + 1);
+				}
+				oldLetters.get(x).setLetter(l);;
+				System.out.println("Replacing " + l + " with " + (board.letterLimits.get(l) - 1));
+				board.letterLimits.replace(l, board.letterLimits.get(l) - 1);
+			}
+			else {
+				System.out.println("No letters left: " + l);
+				x -= 1;
+			}
+		}	
+		return oldLetters;
+		
 	}
 	
 	public boolean isTurn() {
