@@ -12,13 +12,22 @@ public class Button {
 	
 	private static List<Button> register = new ArrayList<Button>();
 	
+	//Coordinates on screen
 	private int x;
 	private int y;
+	
+	//Width and height of button
 	private int width;
 	private int height;
+	
+	//Image to render
 	private Image image;
+	
+	//Whether or not it has been clicked
 	private boolean clicked = false;
+	//Whether or not it was clicked last frame
 	private boolean prevClicked = false;
+	//Whether or not it is set to render
 	private boolean render = false;
 
 	public Button(int xPosition, int yPosition, Image image)
@@ -47,6 +56,8 @@ public class Button {
 		this.image = image;
 		register.add(this);
 	}
+	
+	//if render is true, draws the image
 	private void render(GameContainer arg0, Graphics arg1)
 	{
 		if(render){
@@ -55,6 +66,8 @@ public class Button {
 			}
 		}
 	}
+	
+	//Checks to see if the button is being clicked
 	private void update(GameContainer arg0, int arg1)
 	{
 		Input input = arg0.getInput();
@@ -74,10 +87,13 @@ public class Button {
 		}
 	}
 	
+	//Whether the button is currently being pressed this frame
 	public boolean isPressedEvent()
 	{
 		return clicked;
 	}
+	
+	//Returns true for the first frame the button is pressed
 	public boolean isDownEvent()
 	{
 		if(clicked) {
@@ -94,6 +110,7 @@ public class Button {
 		return false;
 	}
 	
+	//Whether or not to render the button
 	public void setRender(boolean render)
 	{
 		this.render = render;
@@ -103,12 +120,14 @@ public class Button {
 		return render;
 	}
 	
+	//To render all existing buttons
 	public static void renderAll(GameContainer arg0, Graphics arg1)
 	{
 		for(Button b : register) {
 			b.render(arg0, arg1);
 		}
 	}
+	//To update all existing buttons
 	public static void updateAll(GameContainer arg0, int arg1)
 	{
 		for(Button b : register) {

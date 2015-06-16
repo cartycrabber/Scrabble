@@ -10,9 +10,9 @@ import org.newdawn.slick.Input;;
 
 public class HumanPlayer extends Player{
 
-	private List<Cell> placed;
-	private Cell selected;
-	private int boardWidth;
+	private List<Cell> placed;//List of tiles the player has placed on the board but not submitted
+	private Cell selected;//The cell that was selected by the player
+	private int boardWidth;//Width of the board, used to determine where to render player tray
 	
 	public HumanPlayer(String name, Board board, int boardWidth)
 	{
@@ -24,6 +24,8 @@ public class HumanPlayer extends Player{
 			tray.get(x).setWindow(boardWidth + (50 * x) + (x * 10) + 50, 540);
 		}
 	}
+	
+	//Renders the tray
 	@Override
 	public void render(GameContainer arg0, Graphics arg1) {
 		if(turn) {
@@ -33,6 +35,7 @@ public class HumanPlayer extends Player{
 		}
 	}
 	
+	//If the mouse was pressed, checks to see if it was on a tile and acts accordingly
 	public void mousePressed(int button, int x, int y) {
 		if(turn) {
 			for(Cell c : tray) {
@@ -52,6 +55,7 @@ public class HumanPlayer extends Player{
 		}
 	}
 	
+	//Checks to see if it was one of the keys to submit or return letters
 	public void keyPressed(int key, char c) {
 		if(turn) {
 			if(key == Input.KEY_RETURN) {

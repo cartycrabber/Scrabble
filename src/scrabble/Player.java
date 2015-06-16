@@ -11,14 +11,13 @@ import org.newdawn.slick.Graphics;
 
 public abstract class Player {
 	
-	char[] letterBag;
-	protected List<Cell> tray = new ArrayList<Cell>();
-	protected boolean turn;
-	protected String name;
-	protected Board board;
-	protected int score = 0;
+	protected List<Cell> tray = new ArrayList<Cell>();//Letters in the players tray
+	protected boolean turn;//Whether or not its this players turn
+	protected String name;//name of this player
+	protected Board board;//Board that this player is playing on
+	protected int score = 0;//Score of this player
 	
-	final int TRAY_SIZE = 7;
+	final int TRAY_SIZE = 7;//How many letters must be in this players tray
 	
 	public Player(String name, Board board)
 	{
@@ -37,6 +36,7 @@ public abstract class Player {
 		System.out.println();
 	}
 	
+	//Discard all tiles in tray and replace with new ones
 	public boolean exchangeTiles() {
 		if(tray.size() == TRAY_SIZE) {
 			tray = newLetters(tray);
@@ -45,6 +45,8 @@ public abstract class Player {
 		return false;
 	}
 	
+	//Replace all tiles in given list with new ones with different letters
+	//This method makes sure not to give out any letters that have run out
 	protected List<Cell> newLetters(List<Cell> oldLetters)
 	{
 		System.out.println("Letter Lim Size " + board.letterLimits.size());

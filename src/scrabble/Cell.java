@@ -4,18 +4,27 @@ import org.newdawn.slick.Image;
 
 public class Cell {
 	
+	//Multiplier of the tile
 	private int multiplier;
+	
+	//Letter of the tile
 	private char letter;
+	
+	//Coordinates in tiles relative to the board
 	private int boardX;
 	private int boardY;
+	
+	//Coordinates in pixels relative to the screen
 	private int windowX;
 	private int windowY;
+	
+	//Whether the tile is considered temporary and not submitted.
 	private boolean temporary;
 	
 	private Image img;
 	
-	public static final int CELL_SIZE = 40;
-	public static final char DEFAULT_CHAR = '\0';
+	public static final int CELL_SIZE = 40;//How many pixels tall and wide the tile is
+	public static final char DEFAULT_CHAR = '\0';//The default character is none is given
 	
 	
 	public Cell()

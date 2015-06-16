@@ -24,11 +24,11 @@ public class Board {
 		RIGHT
 	}
 	
-	private Map<Character, Integer> letterPointVals = new HashMap<Character, Integer>();
-	public Map<Character, Integer> letterLimits = new HashMap<Character, Integer>();
-	private int width;
-	private int height;
-	private Cell[][] tiles;
+	private Map<Character, Integer> letterPointVals = new HashMap<Character, Integer>();//Dictionary to look up the point values for each letter
+	public Map<Character, Integer> letterLimits = new HashMap<Character, Integer>();//Dictionary to look up how many letters are left
+	private int width;//width of the board in tiles
+	private int height;//height of the board in tiles
+	private Cell[][] tiles;//2d Array of tiles
 	private ArrayList<String> validWords = new ArrayList<String>();
 	
 	public Board(int width, int height)
@@ -42,6 +42,7 @@ public class Board {
 			}
 		}
 		
+		//Write how many of each letter there are
 		letterLimits.put('a', 9);
 		letterLimits.put('b', 2);
 		letterLimits.put('c', 2);
@@ -69,6 +70,7 @@ public class Board {
 		letterLimits.put('y', 2);
 		letterLimits.put('z', 1);
 		
+		//Multipliers for different tiles
 		tiles[0][0].setMultiplier(3);
 		tiles[1][1].setMultiplier(2);
 		tiles[2][2].setMultiplier(2);
@@ -135,6 +137,7 @@ public class Board {
 		tiles[8][12].setMultiplier(2);
 		tiles[9][13].setMultiplier(3);
 		
+		//How many points each letter is worth
 		letterPointVals.put('a', 1);
 		letterPointVals.put('b', 5);
 		letterPointVals.put('c', 4);
@@ -162,6 +165,7 @@ public class Board {
 		letterPointVals.put('y', 5);
 		letterPointVals.put('z', 10);
 		
+		//Read the dictionary and fill the validwords list from it
 		Scanner s = null;
 		try {
 			s = new Scanner(new File("res/dictionaries/SCOWL-70.txt"));
@@ -176,6 +180,7 @@ public class Board {
 		
 	}
 	
+	//Place word starting at x,y going in direction dir. coordinates start from top left
 	public boolean placeWord(String word, int x, int y, WordDirection dir)//Returns true if valid move, false if not
 	{
 		word = word.toLowerCase();
@@ -218,6 +223,7 @@ public class Board {
 		return false;
 	}
 	
+	//Place a single letter at x,y. coordinates start from top left
 	public boolean placeLetter(int x, int y, char letter, boolean window)//Place a single letter on the board, true if window cords, false if board cords
 	{
 		if(!window) {
@@ -241,6 +247,8 @@ public class Board {
 			}
 		}
 	}
+	
+	//Remove the letter at x,y. Only works if the tile has temporary set to true
 	public void removeLetter(int x, int y, boolean window)//Letter must be temporary
 	{
 		if(!window) {
@@ -250,6 +258,8 @@ public class Board {
 			tiles[(int)(x / Cell.CELL_SIZE)][(int)(y / Cell.CELL_SIZE)].setLetter('\0');
 		}
 	}
+	
+	//Remove all tiles with temporary set to true
 	public void removeAllTempLetters()
 	{
 		for(Cell[] a : tiles) {
@@ -262,7 +272,8 @@ public class Board {
 		}
 	}
 	
-	public int submitWord()
+	//Check if all placed but not submitted tiles for a word, and if so set temporary to false
+	public int submitWord()//Returns how many points the word is worth, or -1 if its not a valid submission
 	{
 		List<Cell> placed = new ArrayList<Cell>();
 		for(Cell[] a : tiles) {
@@ -407,6 +418,7 @@ public class Board {
 		return -1;
 	}
 	
+	//Gets the total score of the board
 	public int getScore()
 	{
 		int score = 0;
@@ -420,6 +432,7 @@ public class Board {
 		return score;
 	}
 	
+	//Checks if a word is in the dictionary
 	public boolean isWord(String word)
 	{
 		if(word.length() < MIN_WORD_SIZE) {
@@ -430,6 +443,7 @@ public class Board {
 		}
 	}
 	
+	//Renders the tiles on the board. Temporary tiles are rendered with a red shading
 	public void render(GameContainer arg0, Graphics arg1)
 	{
 		for(int x = 0; x < tiles.length; x++) {
@@ -445,10 +459,5 @@ public class Board {
 				}
 			}
 		}
-	}
-	
-	private void setLetter(char letter, int x, int y)
-	{
-		tiles[x][y].setLetter(letter);
 	}
 }

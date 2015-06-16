@@ -28,12 +28,11 @@ public class Scrabble extends BasicGame{
 		PLAYER2
 	}
 	
-	State state;
-	Turn turn;
-	boolean playerTurn;
-	private Board board;
+	State state;//Save what state the game is in
+	Turn turn;//Save what turn it is
+	private Board board;//Board instance
 	
-	HumanPlayer player1;
+	HumanPlayer player1;//The players
 	HumanPlayer player2;
 	
 	//URL Prefixes
@@ -48,7 +47,7 @@ public class Scrabble extends BasicGame{
 	
 	public Scrabble(String gamename)
 	{
-		super(gamename);
+		super(gamename);//Constructor
 	}
 
 	public static void main(String[] args)
@@ -57,19 +56,19 @@ public class Scrabble extends BasicGame{
 		{
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new Scrabble("Scrabble"));
-			appgc.setDisplayMode(1100, 600, false);
-			appgc.setShowFPS(false);
+			appgc.setDisplayMode(1100, 600, false);//Size of the screen
+			appgc.setShowFPS(false);//Dont show the annoying fps counter thats on by default
 			appgc.start();
 		}
 		catch (SlickException ex)
 		{
-			Logger.getLogger(Scrabble.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(Scrabble.class.getName()).log(Level.SEVERE, null, ex);//If stuff breaks
 		}
 	}
 
 	@Override
 	public void init(GameContainer arg0) throws SlickException {		
-		//Create all images
+		//Put all the images we need in a dictionary
 		images.put("board", new Image(imageLoc + "board.png"));//http://interactive.usc.edu/wp-content/uploads/2011/08/board.png
 		images.put("exchange", new Image(imageLoc + "recycle.png"));//https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Recycle001.svg/250px-Recycle001.svg.png
 		images.put("start", new Image(imageLoc + "startgame.png"));//http://img3.wikia.nocookie.net/__cb20081130214319/banjokazooie/images/5/5b/Start_button_(GBA).png
@@ -101,14 +100,14 @@ public class Scrabble extends BasicGame{
 		images.put("y", new Image(imageLoc + "Y.png"));
 		images.put("z", new Image(imageLoc + "Z.png"));
 		
-		state = State.MENU;
-		turn = Turn.PLAYER1;
+		state = State.MENU;//Start the game in the main menu
+		turn = Turn.PLAYER1;//Player 1 should have the first turn
 		
-		board = new Board(15,15);
-		exchangeButton = new Button(1050, 300, 50, 50, images.get("exchange"));
-		startGameButton = new Button(650, 480, images.get("start"));
+		board = new Board(15,15);//Create a 15 by 15 board
+		exchangeButton = new Button(1050, 300, 50, 50, images.get("exchange"));//Button for exchanging your tiles
+		startGameButton = new Button(650, 480, images.get("start"));//Button on the main menu to start the game
 		
-		player1 = new HumanPlayer("Will", board, 600);
+		player1 = new HumanPlayer("Will", board, 600);//Create the players
 		player2 = new HumanPlayer("Someone else", board, 600);
 //		board.placeWord("Words", 7, 7, Board.WordDirection.RIGHT);
 //		board.placeWord("without", 8, 3, Board.WordDirection.DOWN);
@@ -119,22 +118,22 @@ public class Scrabble extends BasicGame{
 	@Override
 	public void render(GameContainer arg0, Graphics arg1) throws SlickException {
 		switch(state) {
-		case MENU:
-			images.get("menu").draw(0, 0, 1100, 600);
-			startGameButton.setRender(true);
-			exchangeButton.setRender(false);
+		case MENU://If were currently in the main menu
+			images.get("menu").draw(0, 0, 1100, 600);//Draw the menu background
+			startGameButton.setRender(true);//Render the start button
+			exchangeButton.setRender(false);//Dont render the exchange button
 			break;
-		case GAME:
-			images.get("board").draw(0,0);
-			exchangeButton.setRender(true);
-			startGameButton.setRender(false);
-			board.render(arg0, arg1);
-			player1.render(arg0, arg1);
-			player2.render(arg0, arg1);
-			arg1.drawString(player1.name + ": " + player1.getScore(), 700, 100);
+		case GAME://If were currently in the game
+			images.get("board").draw(0,0);//Draw the board from the top left corner
+			exchangeButton.setRender(true);//Render the exchange button
+			startGameButton.setRender(false);//Dont render the start button
+			board.render(arg0, arg1);//Render the board elements
+			player1.render(arg0, arg1);//Render the player 1 elements
+			player2.render(arg0, arg1);//Render the player 2 elements
+			arg1.drawString(player1.name + ": " + player1.getScore(), 700, 100);//Write thse scores for the player
 			arg1.drawString(player2.name + ": " + player2.getScore(), 700, 120);
 			
-			switch(turn) {
+			switch(turn) {//Say whos turn it is
 			case PLAYER1:
 				arg1.drawString(player1.name + "'s Turn", 800, 50);
 				break;
@@ -144,18 +143,18 @@ public class Scrabble extends BasicGame{
 			}
 			break;
 		}
-		Button.renderAll(arg0, arg1);
+		Button.renderAll(arg0, arg1);//Render all button elements set to render this frame
 	}
 
 	@Override
 	public void update(GameContainer arg0, int arg1) throws SlickException {
-		Button.updateAll(arg0, arg1);
+		Button.updateAll(arg0, arg1);//Update all button elements
 		
-		switch(state) {
+		switch(state) {//Update differently depending on whether were in the main menu or the game
 		case MENU:
-			player1.setTurn(false);
+			player1.setTurn(false);//Set it so neither player can go
 			player2.setTurn(false);
-			if(startGameButton.isDownEvent()) {
+			if(startGameButton.isDownEvent()) {//If the start game button is pressed, start the game
 				state = State.GAME;
 			}
 			break;
@@ -163,20 +162,20 @@ public class Scrabble extends BasicGame{
 			switch(turn) {
 			case PLAYER1:
 				if(!player1.isTurn()) {
-					turn = Turn.PLAYER2;
+					turn = Turn.PLAYER2;//If its not player 1's turn, make it player 2's turn
 					player2.takeTurn();
 				}
 				else {
-					if(exchangeButton.isDownEvent()) {
+					if(exchangeButton.isDownEvent()) {//If the exchange button is pressed, exchange tiles and switch turns
 						System.out.println("Player 1 Exchanging");
-						if(player1.exchangeTiles()){
+						if(player1.exchangeTiles()){//Only change turns if exchange tiles succeeded
 							player1.setTurn(false);
 						}
 					}
 				}
 				break;
 			case PLAYER2:
-				if(!player2.isTurn()) {
+				if(!player2.isTurn()) {//Same stuff as player 1
 					turn = Turn.PLAYER1;
 					player1.takeTurn();
 				}
@@ -197,14 +196,14 @@ public class Scrabble extends BasicGame{
 	
 	public static Image getImage(String name)
 	{
-		return images.get(name);
+		return images.get(name);//Load the images from the disk
 	}
 	
-	public void mousePressed(int button, int x, int y) {
+	public void mousePressed(int button, int x, int y) {//Pass the mouse pressed event to the players
 		player1.mousePressed(button, x, y);
 		player2.mousePressed(button, x, y);
 	}
-	public void keyPressed(int key, char c) {
+	public void keyPressed(int key, char c) {//Pass the key pressed event to the players
 		player1.keyPressed(key, c);
 		player2.keyPressed(key, c);
 	}
